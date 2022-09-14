@@ -1,39 +1,47 @@
 package com.bridgelabz.hotelreservation;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class HotelReservationService {
+    static LocalDate inDate ,outDate;
     List<Hotel> hotelList = new ArrayList<>();
 
     public boolean addHotel(Hotel hotel){
         hotelList.add(hotel);
         return true;
     }
+    Scanner scr = new Scanner(System.in);
+    String checkInDate;
+    String checkOutDate;
 
-    Hotel getCheapestHotel(String checkInDate, String checkOutDate) {
-        int totalReservationDays = CalculateTotalReservationDays(checkInDate, checkOutDate);
-        calculateTotalCost(totalReservationDays);
-        Hotel cheapestHotel = hotelList.stream().sorted((x, y) -> Integer.compare(x.getTotalCost(), y.getTotalCost())).collect(Collectors.toList()).get(0);
-        return cheapestHotel;
+    public void enterDates(){
+
+        System.out.println("Enter check In Date: eg(dd-mm-yy)");
+        checkInDate = scr.nextLine();
+        System.out.println("Enter check Out Date: eg(dd-mm-yy)");
+        checkOutDate = scr.nextLine();
+
+        inDate = LocalDate.of(Integer.parseInt(checkInDate.substring(5,9)),Integer.parseInt(checkInDate.substring(3,4)),Integer.parseInt(checkInDate.substring(0,2)));
+        outDate = LocalDate.of(Integer.parseInt(checkOutDate.substring(5,9)),Integer.parseInt(checkOutDate.substring(3,4)),Integer.parseInt(checkOutDate.substring(0,2))).plusDays(1);
+
     }
 
-    int CalculateTotalReservationDays(String checkInDate, String checkOutDate) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Integer.valueOf(checkInDate.substring(6, 10)), Integer.valueOf(checkInDate.substring(3, 5)), Integer.valueOf(checkInDate.substring(0, 2)));
-        Date date1 = calendar.getTime();
-        calendar.set(Integer.valueOf(checkOutDate.substring(6, 10)), Integer.valueOf(checkOutDate.substring(3, 5)), Integer.valueOf(checkOutDate.substring(0, 2)));
-        Date date2 = calendar.getTime();
-        int totalDays = (int) Math.abs((date2.getTime() - date1.getTime()) / (1000 * 60 * 60 * 24));
-        return totalDays;
-    }
+     Hotel cheapestHotel(){
+        enterDates();
+        long totalDays = ChronoUnit.DAYS.between(inDate, outDate);
+         calculateTotalCost(totalDays);
+         hotelList.sort(Comparator.comparing(Hotel::getTotalCost));
+         Hotel cheapRate = hotelList.get(0);
 
-    void calculateTotalCost(int totalDays) {
+         return cheapRate;
+     }
+
+    void calculateTotalCost(long totalDays) {
         hotelList.stream().forEach(x -> {
             x.setTotalCost(totalDays * x.getRate());
         });
     }
 }
+

@@ -1,9 +1,11 @@
 package com.bridgelabz.hotelreservation;
 
 public class Hotel {
+
+
     private final String name;
     private final int rate;
-    private int totalCost;
+    private long totalCost;
 
     public Hotel(String name, int rate) {
         this.name = name;
@@ -14,16 +16,15 @@ public class Hotel {
         return name;
     }
 
-    public int getRate() {
+    public long getRate() {
         return rate;
     }
 
-    public int getTotalCost() {
+    public long getTotalCost() {
         return totalCost;
     }
 
-    public void setTotalCost(int totalCost) {
+    public void setTotalCost(long totalCost) {
         this.totalCost = totalCost;
     }
-
 }
